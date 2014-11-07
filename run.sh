@@ -18,25 +18,24 @@ if [ "x"$1 != "x" ]; then
     if [ "x"$CONTAINER_ID != "x" ]; then
         # container exists (stopped)
 
-        # this means tagging didn't happen last run
-        # recover by tagging and then use that tag for next start
-        CMD="${CMD}docker commit -a \"$USER\" $CONTAINER_NAME $USER/jbds:$1;"
-
-        # and then remove the container
-        CMD="${CMD}docker rm $CONTAINER_NAME;"
-    fi
-
-    IMAGE_TAG=`docker images | grep "^$USER/jbds" | awk '{print $2}' | grep "^${1}$"`
-
-    if [ "x"$IMAGE_TAG != "x" ]; then
-        # tag exists, start from the tag
-        CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $USER/jbds:$IMAGE_TAG /home/$USER/jbdevstudio/studio/jbdevstudio;"
+        # start the container, don't tag first since it was probably tagged last run (and if not will be tagged if this run has a clean shutdown)
+        CMD="${CMD}docker start --attach=true $CONTAINER_NAME;"
     else
-        # tag doesn't exist yet, start from base image
-        CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $USER/jbds /home/$USER/jbdevstudio/studio/jbdevstudio;"
+        # no container exists, goign to have to start from an image
+        IMAGE_TAG=`docker images | grep "^$USER/jbds" | awk '{print $2}' | grep "^${1}$"`
+
+        if [ "x"$IMAGE_TAG != "x" ]; then
+            # tag exists, start from the tag
+            CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $USER/jbds:$IMAGE_TAG /home/$USER/jbdevstudio/studio/jbdevstudio;"
+        else
+            # tag doesn't exist yet, start from base image
+            CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $USER/jbds /home/$USER/jbdevstudio/studio/jbdevstudio;"
+        fi
+
     fi
 
-    CMD="${CMD}docker commit -a \"$USER\" $CONTAINER_NAME $USER/jbds:$1;docker rm $CONTAINER_NAME;"
+    # save container state at end as image tag
+    CMD="${CMD}docker commit -a \"$USER\" $CONTAINER_NAME $USER/jbds:$1;"
 else
     # no name specified, destroy on shutdown
     CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --rm $USER/jbds /home/$USER/jbdevstudio/studio/jbdevstudio;"
