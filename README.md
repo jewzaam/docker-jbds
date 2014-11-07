@@ -1,10 +1,10 @@
-docker-X11
+docker-jbds
 ==========
 
-Simple docker image for running running GUI app.
+Docker image for running JBoss Developer Studio.
 
 # Why?
-I had some problems getting this to work as a proof of concept and wanted to put the very simple example I came up with that works on github.
+I get tired of environment specific variances and having to deal with system re-installs.  After learning how to run a graphical application within a docker image I'm trying this to see if it will be reusable by others, specifically team members.
 
 # Using This Thing
 
