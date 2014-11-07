@@ -9,12 +9,14 @@ I get tired of environment specific variances and having to deal with system re-
 # Using This Thing
 
 1. Install Docker
-2. Run build script: `./build.sh`
+2. Download JBoss Developer Studio and place in the `sources` directory.
+    * this is necessary because of user agreements for the download, sorry
+3. Run build script: `./build.sh`
     * note this includes adding a user to the image same as $USER env variable
-3. Run setup script: `./setup.sh`
+4. Run setup script: `./setup.sh`
     * sets selinux to permissive mode
     * sets up xhost for the specific user
-4. Run some GUI: `./run.sh xeyes`
+5. Run JBDS: `./run.sh`
 
 # Assumptions
 

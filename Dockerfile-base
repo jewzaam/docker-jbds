@@ -1,0 +1,26 @@
+FROM fedora:20
+
+MAINTAINER Naveen Malik <jewzaam@gmail.com>
+
+# Base install
+RUN yum update -y && yum clean all
+RUN yum install -y xorg-x11-server-Xvfb \
+xorg-x11-font \
+xulrunner-26.0-2.fc20.x86_64 \
+dejavu-sans-fonts \
+dejavu-serif-fonts \
+xdotool && yum clean all
+
+# JBDS dependencies
+RUN yum install -y gtk2 \
+java-1.8.0-openjdk-devel && yum clean all
+
+# pull in the installer for jbds
+ENV INSTALLDIR /tmp
+RUN mkdir -p $INSTALLDIR
+ADD software/jboss-devstudio-8.0.0.GA-v20141020-1042-B317-installer-eap.jar $INSTALLDIR/jbds.jar
+ADD software/InstallConfigRecord.xml $INSTALLDIR/InstallConfigRecord.xml
+
+RUN java -jar $INSTALLDIR/jbds.jar $INSTALLDIR/InstallConfigRecord.xml
+
+RUN rm $INSTALLDIR/jbds.jar $INSTALLDIR/InstallConfigRecord.xml

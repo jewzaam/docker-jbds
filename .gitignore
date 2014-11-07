@@ -1,1 +1,6 @@
 *.jar
+
+
+# ignore the generated Dockerfile
+# ignore the generated Dockerfile
+Dockerfile
