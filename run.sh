@@ -1,5 +1,7 @@
 #!/bin/sh
 
+IMAGE_NAME="$USER/jbds"
+
 if [ "x"$1 != "x" ]; then
     CONTAINER_NAME="keep_${USER}_${1}"
 
@@ -22,23 +24,23 @@ if [ "x"$1 != "x" ]; then
         CMD="${CMD}docker start --attach=true $CONTAINER_NAME;"
     else
         # no container exists, goign to have to start from an image
-        IMAGE_TAG=`docker images | grep "^$USER/jbds" | awk '{print $2}' | grep "^${1}$"`
+        IMAGE_TAG=`docker images | grep "^$IMAGE_NAME" | awk '{print $2}' | grep "^${1}$"`
 
         if [ "x"$IMAGE_TAG != "x" ]; then
             # tag exists, start from the tag
-            CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $USER/jbds:$IMAGE_TAG /home/$USER/jbdevstudio/studio/jbdevstudio;"
+            CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $IMAGE_NAME:$IMAGE_TAG /home/$USER/jbdevstudio/studio/jbdevstudio;"
         else
             # tag doesn't exist yet, start from base image
-            CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $USER/jbds /home/$USER/jbdevstudio/studio/jbdevstudio;"
+            CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --name=\"$CONTAINER_NAME\" $IMAGE_NAME /home/$USER/jbdevstudio/studio/jbdevstudio;"
         fi
 
     fi
 
     # save container state at end as image tag
-    CMD="${CMD}docker commit -a \"$USER\" $CONTAINER_NAME $USER/jbds:$1;"
+    CMD="${CMD}docker commit -a \"$USER\" $CONTAINER_NAME $IMAGE_NAME:$1;"
 else
     # no name specified, destroy on shutdown
-    CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --rm $USER/jbds /home/$USER/jbdevstudio/studio/jbdevstudio;"
+    CMD="${CMD}docker run -i -t -e DISPLAY=$DISPLAY -u $USER -v /tmp/.X11-unix:/tmp/.X11-unix --rm $IMAGE_NAME /home/$USER/jbdevstudio/studio/jbdevstudio;"
 fi
 
 IFS=";"
