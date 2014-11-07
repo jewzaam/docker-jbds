@@ -9,14 +9,14 @@ I get tired of environment specific variances and having to deal with system re-
 # Using This Thing
 
 1. Install Docker
-2. Download JBoss Developer Studio and place in the `sources` directory.
-    * this is necessary because of user agreements for the download, sorry
+2. Download [JBoss Developer Studio](https://www.jboss.org/products/jbds.html) and place in the `software` directory.
 3. Run build script: `./build.sh`
     * note this includes adding a user to the image same as $USER env variable
 4. Run setup script: `./setup.sh`
     * sets selinux to permissive mode
     * sets up xhost for the specific user
 5. Run JBDS: `./run.sh`
+    * to save state, provide an optional argument to name your container and create an image tag:  `./run.sh test`
 
 # Assumptions
 
